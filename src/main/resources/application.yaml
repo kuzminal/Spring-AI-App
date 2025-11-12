@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: SpringAIApp
+  ai:
+    ollama:
+      base-url: http://localhost:11431
+      chat:
+        model: gemma3:4b-it-q4_K_M
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ragdb
+    username: postgres
+    password: postgres
+
+  main:
+    allow-circular-references: true
