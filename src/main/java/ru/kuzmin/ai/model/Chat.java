@@ -35,6 +35,4 @@ public class Chat {
     public void addEntry(ChatEntry entry) {
         history.add(entry);
     }
-
-
 }

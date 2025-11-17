@@ -3,6 +3,7 @@ package ru.kuzmin.ai.service;
 import jakarta.transaction.Transactional;
 import lombok.SneakyThrows;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.memory.ChatMemory;
 import org.springframework.ai.chat.model.ChatResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -61,24 +62,19 @@ public class ChatService {
     }
 
     public SseEmitter proceedInteractionWithStreaming(Long chatId, String userPrompt) {
-        myProxy.addChatEntry(chatId, userPrompt, USER);
-
         SseEmitter sseEmitter = new SseEmitter(0L);
         final StringBuilder answer = new StringBuilder();
 
         chatClient
                 .prompt(userPrompt)
+                .advisors(advisorSpec -> advisorSpec.param(ChatMemory.CONVERSATION_ID, chatId))
                 .stream()
                 .chatResponse()
                 .subscribe(
                         (ChatResponse response) -> processToken(response, sseEmitter, answer),
-                        sseEmitter::completeWithError,
-                        () -> myProxy.addChatEntry(chatId, answer.toString(), ASSISTANT));
+                        sseEmitter::completeWithError);
         return sseEmitter;
     }
-
-
-
 
     @SneakyThrows
     private static void processToken(ChatResponse response, SseEmitter emitter, StringBuilder answer) {

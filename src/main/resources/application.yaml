@@ -12,9 +12,6 @@ spring:
     url: jdbc:postgresql://localhost:5432/ragdb
     username: postgres
     password: postgres
-  jpa:
-    hibernate:
-      ddl-auto: update
 
   main:
     allow-circular-references: true
